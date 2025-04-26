@@ -10,9 +10,6 @@ A modern task management web application built with Next.js and TypeScript, feat
   - ✅ Create new tasks with detailed information
   - 📝 Edit existing tasks
   - 🗑️ Delete tasks
-  - 🔍 Search tasks by name
-  - 🔄 Sort tasks by due date
-  - 🏷️ Filter tasks by priority and status
 
 ### Technical Implementation
 - Built with Next.js 14 and TypeScript for type safety
