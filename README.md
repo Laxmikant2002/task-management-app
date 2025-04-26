@@ -19,8 +19,17 @@ A modern task management web application built with Next.js and TypeScript, feat
 - React Context API for state management
 - Modern UI with Tailwind CSS
 - Responsive design for all screen sizes
-- Client-side form validation
-- Consistent date formatting across components
+- Deployed on Vercel for fast and reliable hosting
+
+## 🚀 Deployment
+
+The application is live and can be accessed at:  
+[https://task-management-lbarbta2p-laxmikant2002s-projects.vercel.app](https://task-management-lbarbta2p-laxmikant2002s-projects.vercel.app)
+
+## ❗️ Notes
+
+- The `builds` configuration in the Vercel project settings overrides the Build and Development Settings. For more details, refer to the [Vercel documentation](https://vercel.link/unused-build-settings).
+- Ensure to update deprecated dependencies like `uuid` to version 7 or higher to avoid potential issues.
 
 ## 🛠️ Technical Details
 
