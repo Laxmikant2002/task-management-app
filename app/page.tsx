@@ -1,87 +1,91 @@
 'use client';
 
-import { useState, useContext, createContext } from 'react';
-import { Task } from '../types';
-import TaskTable from '../components/TaskTable';
-import AddTaskModal from '../components/AddTaskModal';
+import { useState } from 'react';
+import { TaskProvider } from './context/TaskContext';
+import TaskTable from './components/TaskTable';
+import AddTaskModal from './components/AddTaskModal';
+import { Priority, Status } from './types';
 
-const TaskContext = createContext<{
-  tasks: Task[];
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-}>({ tasks: [], setTasks: () => {} });
-
-export default function TaskManagementApp() {
-  const initialTasks: Task[] = [
-    { id: 1, title: 'Lorem ipsum', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy eirmod tempor invidunt ut labore et dolore magna', dueDate: '2024-09-12', status: 'Completed', priority: 'Medium' },
-    { id: 2, title: 'Lorem ipsum', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy eirmod tempor invidunt ut labore et dolore magna', dueDate: '2024-09-15', status: 'In Progress', priority: 'High' },
-    { id: 3, title: 'Lorem ipsum', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy eirmod tempor invidunt ut labore et dolore', dueDate: '2024-09-17', status: 'In Progress', priority: 'Medium' },
-    { id: 4, title: 'Lorem ipsum', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy eirmod tempor invidunt ut labore et', dueDate: '2024-09-18', status: 'Completed', priority: 'Low' },
-    { id: 5, title: 'Lorem ipsum', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy eirmod tempor invidunt ut labore et dolore magna', dueDate: '2024-09-20', status: 'Completed', priority: 'Low' },
-    { id: 6, title: 'Lorem ipsum', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy eirmod tempor', dueDate: '2024-09-25', status: 'Completed', priority: 'High' },
-    { id: 7, title: 'Lorem ipsum', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy eirmod tempor invidunt ut', dueDate: '2024-09-27', status: 'In Progress', priority: 'High' },
-  ];
-
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [searchTerm, setSearchTerm] = useState('');
+export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
-  const [filterPriority, setFilterPriority] = useState<string>('');
-  const lasciato [filterStatus, setFilterStatus] = useState<string>('');
-
-  const filteredTasks = tasks
-    .filter(task => task.title.toLowerCase().includes(searchTerm.toLowerCase()))
-    .filter(task => !filterPriority || task.priority === filterPriority)
-    .filter(task => !filterStatus || task.status === filterStatus)
-    .sort((a, b) => sortOrder === 'asc' ? new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime() : 
-      sortOrder === 'desc' ? new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime() : 0);
+  const [filterPriority, setFilterPriority] = useState<Priority | ''>('');
+  const [filterStatus, setFilterStatus] = useState<Status | ''>('');
 
   return (
-    <TaskContext.Provider value={{ tasks: filteredTasks, setTasks }}>
-      <div className="container mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-6">Tasks</h1>
-        <div className="flex justify-between items-center mb-6">
-          <input
-            type="text"
-            placeholder="Search tasks..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="p-2 border rounded-lg w-1/3 focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-          <div className="flex space-x-4">
-            <button
-              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 flex items-center"
-            >
-              Sort by Date
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 10l5 5 5-5" />
-              </svg>
-            </button>
-            <select
-              onChange={(e) => setFilterPriority(e.target.value)}
-              className="p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-            >
-              <option value="">Filter by Priority</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
-            <select
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-            >
-              <option value="">Filter by Status</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
-            </select>
-            <AddTaskModal />
+    <TaskProvider>
+      <main className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center space-x-8">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold">S7</span>
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900">Studio137</h1>
+              </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                />
+                <svg
+                  className="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                </svg>
+                <span>Add Task</span>
+              </button>
+              <button
+                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                className="border border-gray-300 bg-white text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3z" />
+                </svg>
+                <span>Sort</span>
+              </button>
+              <button
+                onClick={() => {}}
+                className="border border-gray-300 bg-white text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
+                </svg>
+                <span>Filter</span>
+              </button>
+            </div>
           </div>
-        </div>
-        {filteredTasks.length === 0 ? (
-          <p className="text-center text-gray-500">No task found</p>
-        ) : (
+
           <TaskTable />
-        )}
-      </div>
-    </TaskContext.Provider>
+        </div>
+
+        <AddTaskModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      </main>
+    </TaskProvider>
   );
 }
